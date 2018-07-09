@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jack.manager.dao.PageDataDao">
+
+	<select id="menuPage" resultType="hashMap"
+		parameterType="string">
+		select * from sys_menu where 1=1
+		<if test="menuText != null">
+			and m_text like #{menuText}
+		</if>
+		order by m_goorder
+	</select>
+	
+	<select id="actionPageByMenuId" resultType="hashMap"
+		parameterType="integer">
+		select * from sys_action where a_menu_id = #{menuId}
+	</select>
+	
+	<select id="userPage" resultType="hashMap" parameterType="string">
+		select * from sys_user where u_status = 0
+		<if test="name != null">
+			and nick_name like #{name}
+		</if>
+		order by createtime desc
+	</select>
+	
+	<select id="companyPage" resultType="hashMap">
+		select * from sys_company where 1 = 1
+		<if test="name != null">
+			and a_name like #{name}
+		</if>
+		<if test="status != null">
+			and a_status =  #{status}
+		</if>
+		order by create_time desc
+	</select>
+
+</mapper>

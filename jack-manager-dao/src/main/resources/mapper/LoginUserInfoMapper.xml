@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jack.manager.dao.LoginUserInfoDao">
+
+	<select id="findClockInfo" parameterType="com.jack.manager.dao.utils.DaoParam"
+		resultType="hashMap">
+
+		SELECT * FROM app_clock_in_info where a_status = 0
+		<if test="user_id != null">
+			and a_user_id = #{user_id}
+		</if>
+		<if test="begin_time != null">
+			and a_create_time &gt;=
+			#{begin_time}
+		</if>
+		<if test="end_time != null">
+			and a_create_time &lt;=
+			#{end_time}
+		</if>
+
+	</select>
+
+</mapper>

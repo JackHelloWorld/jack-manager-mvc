@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jack.manager.dao.MenuDao">
+
+	<select id="selectUserMenus" resultType="hashMap" parameterType="integer">
+		SELECT
+			smu.*
+		FROM
+			sys_menu_user smur,
+			sys_menu smu
+		WHERE
+			smu.id = smur.menu_id
+		AND smur.user_id = #{userId}
+	</select>
+
+</mapper>
