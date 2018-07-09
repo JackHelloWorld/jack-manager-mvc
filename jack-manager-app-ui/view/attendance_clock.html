@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>考勤打卡</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/loding.css" rel="stylesheet" />
+	<style>
+		.title {
+		    margin: 20px 15px 10px;
+		    color: #6d6d72;
+		    font-size: 15px;
+		};
+		
+	</style>
+	</head>
+
+	<body style="background-color: #FFFFFF;">
+		<header class="mui-bar mui-bar-nav" style="padding-top: 10px;">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">打卡</h1>
+		</header>
+		<div class="mui-content" style="background-color: #FFFFFF;">
+			<div class="title">今日打卡情况</div>
+			<ul class="mui-table-view" id="daka_record">
+			</ul>
+			<div class="" style="padding-top: 15px;"><span class=" mui-btn-blue" id="address">打卡会记录位置和时间</span></div>
+			<div class="title"><span style="font-size: 80px;font-weight: bold;color: blue;">.</span><span id="dakaInfo" data-info="1">上班打卡</span></div>
+			<div style="background-color: #91a9ee;width: 150px; height: 150px;margin: 0px auto;border-radius:100px" id="dakaTo">
+				<div style="background-color: #859bdd;width: 145px; height: 145px;margin: 0px auto;border-radius:100px">
+					<div style="background-color: #486acb;width: 140px; height: 140px;margin: 0px auto;border-radius:100px;text-align: center;padding-top: 30px;color: #FFFFFF;">
+						<span id="daka_title">上班打卡</span><br/><br/>
+						<span id="currentTime"></span>
+					</div>
+				</div>
+				
+			</div>
+		
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/utils.js"></script>
+		<script src="../js/jquery.min.js"></script>
+		<script src="../js/loding.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			function re_record(){
+				mui.showLoading("加载中..","div");
+				var tt = 1;
+				//获取打卡记录
+				mui.ajax(serverConfig.OACLOCKINCOLCKIN,{
+					data:{},
+					dataType:'json',//服务器返回json格式数据
+					type:'post',//HTTP请求类型
+					timeout:10000,//超时时间设置为10秒	  
+					headers:{"token":plus.storage.getItem("token")},
+					success:function(data){
+						if(data.code==0){
+							mui("#daka_record")[0].innerHTML="";
+							for(var i = 0;i<data.data.length;i++){
+								var dd = data.data[i];
+								tt = dd.type;
+								var address = dd.city+dd.addresses;
+								var createTime = new Date(dd.createTime).format("yyyy-MM-dd hh:mm:ss");
+								var lastHtml = '';
+								if(data.data.length-1 == i)
+									lastHtml = '<div class="mui-slider-right mui-disabled"><a onclick="updateClock('+dd.id+')" class="mui-btn mui-btn-green">更新</a></div>';
+								if(dd.type==1){
+									var html = '<li class="mui-table-view-cell">'+lastHtml+'<div class="mui-slider-handle">上班打卡<div style="float:right">'+createTime+'</div><br/><span class="mui-badge mui-badge-primary">'+address+'</span></div></li>';
+									$("#daka_record").append(html);
+								}else{
+									var html = '<li class="mui-table-view-cell">'+lastHtml+'<div class="mui-slider-handle">下班打卡<div style="float:right">'+createTime+'</div><br/><span class="mui-badge mui-badge-success">'+address+'</span></div></li>';
+									$("#daka_record").append(html);
+								}
+							}
+							if(tt==1){
+								mui("#dakaInfo")[0].setAttribute("data-info",2);
+								mui("#dakaInfo")[0].innerHTML="下班打卡";
+								mui("#daka_title")[0].innerHTML="下班打卡";
+							}else{
+								mui("#dakaInfo")[0].setAttribute("data-info",1);
+								mui("#dakaInfo")[0].innerHTML="上班打卡";
+								mui("#daka_title")[0].innerHTML="上班打卡";
+							}
+						}else{
+							mui.toast(data.msg);
+						}
+						mui.hideLoading(function(){});
+					},
+					error:function(xhr,type,errorThrown){
+						mui.toast("网络错误");
+						mui.hideLoading(function(){});
+					}
+				});
+			}
+			mui.plusReady(function(){
+				re_record();
+				plus.geolocation.getCurrentPosition(translatePoint,function(e){
+			        alert("无法获取位置信息");
+			        plus.navigator.closeSplashscreen();
+				});
+				mui(".mui-content").on("tap","#dakaInfo",function(){
+					var type = this.getAttribute("data-info");
+					if(type==1){
+						mui("#dakaInfo")[0].setAttribute("data-info",2);
+						mui("#dakaInfo")[0].innerHTML="下班打卡";
+						mui("#daka_title")[0].innerHTML="下班打卡";
+					}else{
+						mui("#dakaInfo")[0].setAttribute("data-info",1);
+						mui("#dakaInfo")[0].innerHTML="上班打卡";
+						mui("#daka_title")[0].innerHTML="上班打卡";
+					}
+				})
+				mui(".mui-content").on("tap","#dakaTo",function(){
+					mui.showLoading("打卡中..","div");
+					plus.geolocation.getCurrentPosition(ajaxDaka,function(e){
+				        alert("无法获取位置信息");
+				        plus.navigator.closeSplashscreen();
+					});
+				})
+			});
+			function translatePoint(position){
+			   mui("#address")[0].innerHTML=position.address.city+position.addresses;
+			}
+			
+			var tempId = 0;
+			
+			function updateClock(id){
+				mui.confirm('是否更新该条记录？', '系统提示', ['更新','取消'], function(e) {
+					if (e.index == 0) {
+						mui.showLoading("更新中..","div");
+						tempId = id;
+						plus.geolocation.getCurrentPosition(reAjaxDaka,function(e){
+					        alert("无法获取位置信息");
+					        plus.navigator.closeSplashscreen();
+						});
+					} else {
+						
+					}
+				});
+			}
+			
+			setInterval(updateDate,1000);
+			function updateDate(){
+					var myDate = new Date();
+					var hh = (myDate.getHours()<10)?("0"+myDate.getHours()):myDate.getHours();
+					var mm = (myDate.getMinutes()<10)?("0"+myDate.getMinutes()):myDate.getMinutes();
+					var ss = (myDate.getSeconds()<10)?("0"+myDate.getSeconds()):myDate.getSeconds();
+					var html = hh+":"+mm+":"+ss;
+					mui("#currentTime")[0].innerHTML=html;
+			}
+			function ajaxDaka(position){
+				var type = mui("#dakaInfo")[0].getAttribute("data-info");
+				if(!position.address || !position.coords){
+					mui.alert("定位失败");
+					return;
+				}
+				mui.ajax(serverConfig.OACLOCKIN,{
+					data:{
+						type : type,
+						coordsType:position.coordsType,
+						district:position.address.district,
+						country:position.address.country,
+						province:position.address.province,
+						city:position.address.city,
+						street:position.address.street,
+						streetNum:position.address.streetNum,
+						addresses:position.addresses,
+						latitude:position.coords.latitude,
+						longitude:position.coords.longitude,
+						accuracy:position.coords.accuracy,
+						altitude:position.coords.altitude,
+						timestamp:new Date().getTime()
+					},
+					dataType:'json',//服务器返回json格式数据
+					type:'post',//HTTP请求类型
+					timeout:15000,//超时时间设置为15秒	
+					headers:{"token":plus.storage.getItem("token")},
+					success:function(data){
+						mui.hideLoading(function(){
+							if(data.code==0){
+								mui.toast("打卡成功");
+								re_record();
+							}else{
+								mui.alert(data.msg);
+							}
+						});
+					},
+					error:function(xhr,type,errorThrown){
+						console.log(JSON.stringify(xhr));
+						mui.hideLoading(function(){
+							mui.alert("网络错误");
+						});
+					}
+				});
+			}
+			
+			function reAjaxDaka(position){
+				var type = mui("#dakaInfo")[0].getAttribute("data-info");
+				mui.ajax(serverConfig.OARECLOCKIN,{
+					data:{
+						id:tempId,
+						type : type,
+						coordsType:position.coordsType,
+						district:position.address.district,
+						country:position.address.country,
+						province:position.address.province,
+						city:position.address.city,
+						street:position.address.street,
+						streetNum:position.address.streetNum,
+						addresses:position.addresses,
+						latitude:position.coords.latitude,
+						longitude:position.coords.longitude,
+						accuracy:position.coords.accuracy,
+						altitude:position.coords.altitude,
+						timestamp:new Date().getTime()
+					},
+					dataType:'json',//服务器返回json格式数据
+					type:'post',//HTTP请求类型
+					timeout:15000,//超时时间设置为15秒	
+					headers:{"token":plus.storage.getItem("token")},
+					success:function(data){
+						mui.hideLoading(function(){
+							if(data.code==0){
+								mui.toast("更新成功");
+								re_record();
+							}else{
+								mui.alert(data.msg);
+							}
+						});
+					},
+					error:function(xhr,type,errorThrown){
+						console.log(JSON.stringify(xhr));
+						mui.hideLoading(function(){
+							mui.alert("网络错误");
+						});
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

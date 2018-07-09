@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+<style>
+.title {
+    margin: 20px 15px 10px;
+    color: #6d6d72;
+    font-size: 15px;
+};
+</style>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/icons-extra.css" rel="stylesheet" />
+		<link href="../css/loding.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div class="mui-content">
+		  	<div class="title">常用应用</div>
+		  	<ul class="mui-table-view mui-grid-view mui-grid-9">
+			  <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+			      <a href="#">
+			          <span class="mui-icon mui-icon-flag"><span class="mui-badge mui-badge-red">5</span></span>
+			          <div class="mui-media-body">待审批</div>
+			      </a>
+			  </li>
+			  <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+			      <a href="#">
+			          <span class="mui-icon mui-icon-checkmarkempty"></span>
+			          <div class="mui-media-body">已审批</div>
+			      </a>
+			  </li>
+			  <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+			      <a href="#">
+			          <span class="mui-icon mui-icon-compose"></span>
+			          <div class="mui-media-body">发起审批</div>
+			      </a>
+			  </li>
+			   <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+			      <a href="javascript:;" id="kaoqing">
+			          <span class="mui-icon mui-icon-paperplane"></span>
+			          <div class="mui-media-body">考勤打卡</div>
+			      </a>
+			  </li>
+		    </ul>
+		    <div class="title">日志</div>
+		  	<ul class="mui-table-view mui-grid-view mui-grid-9">
+			  <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+			      <a href="#">
+			          <span class="mui-icon mui-icon-extra mui-icon-extra-xiaoshuo"></span>
+			          <div class="mui-media-body">日报</div>
+			      </a>
+			  </li>
+			  <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+			      <a href="#">
+			          <span class="mui-icon mui-icon-extra mui-icon-extra-topic"></span>
+			          <div class="mui-media-body">周报</div>
+			      </a>
+			  </li>
+		    </ul>
+		     <div class="title">其他功能</div>
+		  	<ul class="mui-table-view mui-grid-view mui-grid-9">
+		  		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+			      <a href="#">
+			          <span class="mui-icon mui-icon-extra mui-icon-extra-filter"></span>
+			          <div class="mui-media-body">自定义统计</div>
+			      </a>
+			  </li>
+			  <li id="/app/company/count" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="display:none;">
+			      <a href="#"> 
+			          <span class="mui-icon mui-icon-extra mui-icon-extra-classroom"></span>
+			          <div class="mui-media-body">企业统计</div>
+			      </a>
+			  </li>
+			  <li id="/entry/registration" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="display: none;">
+			      <a href="#">
+			          <span class="mui-icon mui-icon-personadd"></span>
+			          <div class="mui-media-body">入职登记</div>
+			      </a>
+			  </li>
+			   <li id="/app/role/manager" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="display: none;">
+			      <a href="#">
+			          <span class="mui-icon mui-icon-gear"></span>
+			          <div class="mui-media-body">权限管理</div>
+			      </a>
+			  </li>
+			  <li id = "/app/department/manager" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="display: none;">
+			      <a href="#">
+			          <span class="mui-icon mui-icon-extra mui-icon-extra-gold"></span>
+			          <div class="mui-media-body">部门管理</div>
+			      </a>
+			  </li>
+		    </ul>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/utils.js"></script>
+		<script src="../js/loding.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function(){
+				
+				mui(".mui-content").on('tap',"#kaoqing",function(){
+					mui.openWindow({
+						id:'attendance_clock.html',
+						url:'attendance_clock.html'
+					});
+				})
+				
+				//获取菜单权限
+				mui.ajax(serverConfig.loadMenuRole,{
+					data:{},
+					dataType:'json',//服务器返回json格式数据
+					type:'post',//HTTP请求类型
+					timeout:10000,//超时时间设置为10秒	  
+					headers:{"token":plus.storage.getItem("token")},
+					success:function(data){
+						if(data.code==0){
+							for(var i = 0;i<data.data.length;i++){
+								var li = document.getElementById(data.data[i].url);
+								if(li){
+									li.style.display="";
+								}
+							}
+						}else{
+							mui.toast(data.msg);
+						}
+					},
+					error:function(xhr,type,errorThrown){
+						mui.toast("网络错误");
+					}
+				});
+			});
+		</script>
+	</body>
+
+</html>
