@@ -5,6 +5,7 @@ serverConfig.loadMenuRole = "http://192.168.2.47:8080/user/load_menu_role";
 serverConfig.OACLOCKIN = "http://192.168.2.47:8080/app/oa/clock_in";
 serverConfig.OARECLOCKIN = "http://192.168.2.47:8080/app/oa/re_clock_in";
 serverConfig.OACLOCKINCOLCKIN = "http://192.168.2.47:8080/app/oa/find_day_clockin";
+serverConfig.FILE_UPLOAD_URL = "http://192.168.2.47:8080/app/common/upload";
 function Base64() {  
    
     // private property  
