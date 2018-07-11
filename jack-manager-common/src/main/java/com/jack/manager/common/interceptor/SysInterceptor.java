@@ -61,6 +61,7 @@ public class SysInterceptor implements HandlerInterceptor {
 			sb.append("Controller  : ").append(method.getBean().getClass().getName()).append(".(").append(className.trim().substring(className.lastIndexOf('.')+1, className.length())).append(".java:1)");
 			sb.append("\nMethod : ").append(method);
 			sb.append("\nParameters : ");
+			@SuppressWarnings("unchecked")
 			Enumeration<String> names = request.getParameterNames();
 			while (names.hasMoreElements()) {
 				String name = names.nextElement();

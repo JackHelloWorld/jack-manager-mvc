@@ -10,6 +10,7 @@ import com.jack.manager.common.utils.Tools;
 public class QueryStartParam {
 
 	public static final ParamRecord getStartParam(HttpServletRequest request,String start){
+		@SuppressWarnings("unchecked")
 		Enumeration<String> names = request.getParameterNames();
 		ParamRecord record = new ParamRecord();
 		while (names.hasMoreElements()) {
@@ -24,6 +25,7 @@ public class QueryStartParam {
 	}
 	
 	public static final ParamRecord getStartParam(HttpServletRequest request){
+		@SuppressWarnings("unchecked")
 		Enumeration<String> names = request.getParameterNames();
 		ParamRecord record = new ParamRecord();
 		while (names.hasMoreElements()) {

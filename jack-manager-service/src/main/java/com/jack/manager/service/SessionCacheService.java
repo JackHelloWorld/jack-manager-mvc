@@ -41,6 +41,7 @@ public class SessionCacheService {
 	public void copySessionAttributes(HttpSession session) {
 		HashOperations<String, String, Object> hashOperations = redisTemplate.opsForHash();
 		redisTemplate.expire(SESSION_INFO.concat(session.getId()), SESSION_TIME_OUT, TimeUnit.MINUTES); 
+		@SuppressWarnings("unchecked")
 		Enumeration<String> attrs = session.getAttributeNames();
 		while (attrs.hasMoreElements()) {
 			String name = (String) attrs.nextElement();

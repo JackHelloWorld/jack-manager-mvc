@@ -23,6 +23,7 @@ public final class QueryDic extends HashMap<String, String>{
 	 * @param request
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static final QueryDic getParBySearch(){
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		QueryDic queryDic = new QueryDic();
@@ -47,6 +48,7 @@ public final class QueryDic extends HashMap<String, String>{
 		if(Tools.isNull(start)){
 			throw new RuntimeException("开头信息不能为空");
 		}
+		@SuppressWarnings("unchecked")
 		Enumeration<String> enumeration = request.getParameterNames();
 		while (enumeration.hasMoreElements()) {
 			String name = (String) enumeration.nextElement();

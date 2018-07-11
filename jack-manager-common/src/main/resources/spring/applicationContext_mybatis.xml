@@ -20,7 +20,7 @@
 	<!-- 引入外置文件 -->
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:persistence-mysql.properties" />
+		<property name="location" value="classpath:config.properties" />
 	</bean>
 	<tx:annotation-driven />
 	<!-- spring和MyBatis完美整合 -->

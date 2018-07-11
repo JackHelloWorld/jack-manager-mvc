@@ -42,6 +42,7 @@ public class BaseController {
 	}
 	
 	public void returnParameter(HttpServletRequest request){
+		@SuppressWarnings("unchecked")
 		Enumeration<String> enumeration = request.getParameterNames();
 		while (enumeration.hasMoreElements()) {
 			String name = (String) enumeration.nextElement();
